@@ -2,25 +2,27 @@ import redminelib
 import click
 import keyring
 
-@click.group()
-def cli():
-    pass
-
 def connect():
     redmine = redminelib.Redmine('https://redmine.isdc.unige.ch/', 
                        username=keyring.get_password('redmine', 'username'), 
                        password=keyring.get_password('redmine', 'password'))
     return redmine
 
-@cli.command("list")
+@click.group()
 @click.option("--project-name", default="INTEGRAL")
+@click.pass_context
+def cli(ctx, project_name):
+    ctx.obj['redmine'] = connect()
+    ctx.obj['project'] = ctx.obj['redmine'].project.get(project_name)
+
+
+@cli.command("list")
 @click.option("--me", default="Volodymyr SAVCHENKO")
-def list_active(project_name, me):
-    r = connect()
-    project = r.project.get(project_name)
-    click.echo(project.id)
+@click.pass_context
+def list_active(ctx, me):
+    click.echo(ctx.obj['project'].id)
     
-    for issue in project.issues:
+    for issue in ctx.obj['project'].issues:
         #print(issue, issue.assigned_to)
         try:
             if issue.assigned_to.name.lower() == me.lower():
@@ -35,4 +37,4 @@ def list_active(project_name, me):
 
 
 if __name__ == "__main__":
-    cli()
+    cli(obj={})
