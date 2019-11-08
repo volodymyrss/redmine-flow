@@ -36,5 +36,8 @@ def list_active(ctx, me):
             click.echo("unassigned: %s; %s"% (issue, repr(e)))
 
 
-if __name__ == "__main__":
+def main():
     cli(obj={})
+
+if __name__ == "__main__":
+    main()
