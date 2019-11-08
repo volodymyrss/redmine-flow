@@ -26,7 +26,7 @@ def list_active(ctx, me):
         #print(issue, issue.assigned_to)
         try:
             if issue.assigned_to.name.lower() == me.lower():
-                click.echo("issue: %s of %s, %s"%(issue,issue.created_on, issue.priority))
+                click.echo("%12s %10s %15s %s"%(issue.created_on, issue.priority, issue.status, issue))
                 #print("-- to", issue.created_on)
                 #print("-- to", issue.assigned_to.__class__)
                 #print("-- to", issue.assigned_to.name.__class__)
