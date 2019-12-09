@@ -1,6 +1,8 @@
 import click
 
 from .issues import commands as group1
+from .docs import commands as group2
+from .file import commands as group3
 
 from redmineflow.redmine import connect
 
@@ -15,7 +17,8 @@ def entry_point(ctx, project_name):
 
 
 entry_point.add_command(group1.issues)
-#entry_point.add_command(group2.version)
+entry_point.add_command(group2.docs)
+entry_point.add_command(group3.file)
 
 
 def main():

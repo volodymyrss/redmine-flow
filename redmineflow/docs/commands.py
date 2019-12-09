@@ -7,12 +7,26 @@ def docs():
     pass
 
 
-@issues.command("list")
+@docs.command("list")
 @click.option("--me", default="Volodymyr SAVCHENKO")
 @click.pass_context
-def list_active(ctx, me):
+def list(ctx, me):
     click.echo(ctx.obj['project'].id)
+
+    #for f in redminelib.managers.FileManager(ctx.obj['redmine'], redminelib.resources.File).filter(project_id=ctx.obj['project'].id):
+    #    print(f)
+
+    #print(dir(ctx.obj['project']), "files")
+    #for f in ctx.obj['project'].files:
+    #    print(f)
+
+    redmine = ctx.obj['redmine']
+
+    #redminelib.managers.ResourceManager.get(ctx.obj['redmine'], 63)
+    redmine.file.get(63)
     
+
+    return
     for issue in ctx.obj['project'].issues:
         #print(issue, issue.assigned_to)
         try:
