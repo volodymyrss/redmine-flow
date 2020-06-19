@@ -2,7 +2,7 @@ from setuptools import setup
 import ast
 import sys
 
-setup_requires = ['setuptools >= 30.3.0']
+setup_requires = ['setuptools >= 30.4.0-dev0']
 if {'pytest', 'test', 'ptr'}.intersection(sys.argv):
     setup_requires.append('pytest-runner')
 
@@ -17,5 +17,5 @@ __version__ = ""
 
 setup(description=__doc__,
       long_description=__doc__,
-      version= '0.3.0', 
+      version= '0.4.0-dev0', 
       setup_requires=setup_requires)
