@@ -2,7 +2,7 @@ from setuptools import setup
 import ast
 import sys
 
-setup_requires = ['setuptools >= 30.3.0', 'setuptools-git-version']
+setup_requires = ['setuptools >= 30.3.0']
 if {'pytest', 'test', 'ptr'}.intersection(sys.argv):
     setup_requires.append('pytest-runner')
 
@@ -17,5 +17,5 @@ __version__ = ""
 
 setup(description=__doc__,
       long_description=__doc__,
-      version_format = '{tag}.dev{commitcount}+{gitsha}', 
+      version= '0.1.0', 
       setup_requires=setup_requires)
