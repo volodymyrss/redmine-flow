@@ -17,5 +17,5 @@ __version__ = ""
 
 setup(description=__doc__,
       long_description=__doc__,
-      version= '0.1.1', 
+      version= '0.2.0-dev0', 
       setup_requires=setup_requires)
