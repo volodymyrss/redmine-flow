@@ -72,36 +72,6 @@ def list(ctx, me):
 
     return
 
-@wiki.command()
-@click.argument("regex", default=None)
-@click.option("--title", default=None, help="page title (else current)")
-@click.pass_context
-def attach_file(ctx, regex, title, commit):
-    redmine = ctx.obj['redmine']
-
-    rc = repoconf.read()
-    if title is None:
-        if  'title' not in rc:
-            print("no title in command line or repo config")
-            return
-        else:
-            title = rc['title']
-            print("using config title:", title)
-
-    page = redmine.wiki_page.get(
-                title, 
-                project_id=ctx.obj['project'].id,
-                include=["attachments"],
-            )
-
-    for attachment in page.attachments:
-        print("found attachment:", attachment, attachment.__class__)
-        if re.match(regex, str(attachment)):
-            print("deleting!")
-            if commit:
-                attachment.delete()
-            else:
-                print("(not really)")
 
 @wiki.command()
 @click.argument("regex", default=None)
