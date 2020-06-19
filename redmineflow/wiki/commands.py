@@ -188,7 +188,7 @@ def push(ctx, title, create, upload_attachments):
 
     if upload_attachments:
         #[{'path': '/absolute/path/to/file'}, {'path': BytesIO(b'I am content of file 2')}]
-        for fn in sorted(glob.glob("attachments/*"), key=lambda x:x.split("/")[-1]):
+        for fn in sorted(glob.glob("attachments/*")):
             print("found file to attach:", fn)
             uploads.append({
                     'path': fn,
