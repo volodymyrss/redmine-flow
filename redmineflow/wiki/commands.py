@@ -2,6 +2,8 @@ import redminelib
 import click
 import ruamel.yaml as yaml
 import os
+import re
+import glob
 import subprocess
 
 
@@ -71,6 +73,69 @@ def list(ctx, me):
     return
 
 @wiki.command()
+@click.argument("regex", default=None)
+@click.option("--title", default=None, help="page title (else current)")
+@click.pass_context
+def attach_file(ctx, regex, title, commit):
+    redmine = ctx.obj['redmine']
+
+    rc = repoconf.read()
+    if title is None:
+        if  'title' not in rc:
+            print("no title in command line or repo config")
+            return
+        else:
+            title = rc['title']
+            print("using config title:", title)
+
+    page = redmine.wiki_page.get(
+                title, 
+                project_id=ctx.obj['project'].id,
+                include=["attachments"],
+            )
+
+    for attachment in page.attachments:
+        print("found attachment:", attachment, attachment.__class__)
+        if re.match(regex, str(attachment)):
+            print("deleting!")
+            if commit:
+                attachment.delete()
+            else:
+                print("(not really)")
+
+@wiki.command()
+@click.argument("regex", default=None)
+@click.option("--title", default=None, help="page title (else current)")
+@click.option("--commit", default=False, is_flag=True, help="only actually delete if this is set, else preview")
+@click.pass_context
+def delete_attachments(ctx, regex, title, commit):
+    redmine = ctx.obj['redmine']
+
+    rc = repoconf.read()
+    if title is None:
+        if  'title' not in rc:
+            print("no title in command line or repo config")
+            return
+        else:
+            title = rc['title']
+            print("using config title:", title)
+
+    page = redmine.wiki_page.get(
+                title, 
+                project_id=ctx.obj['project'].id,
+                include=["attachments"],
+            )
+
+    for attachment in page.attachments:
+        print("found attachment:", attachment, attachment.__class__)
+        if re.match(regex, str(attachment)):
+            print("deleting!")
+            if commit:
+                attachment.delete()
+            else:
+                print("(not really)")
+
+@wiki.command()
 @click.option("--title", default=None, help="page title (else current)")
 @click.option("--local-name", default="README.md")
 @click.option("--include-attachments", default=True)
@@ -114,8 +179,9 @@ def pull(ctx, title, local_name, include_attachments):
 @wiki.command()
 @click.option("--title")
 @click.option("--create/--no-create", default=False)
+@click.option("--upload-attachments", is_flag=True, default=False)
 @click.pass_context
-def push(ctx, title, create):
+def push(ctx, title, create, upload_attachments):
     redmine = ctx.obj['redmine']
 
     rc = repoconf.read()
@@ -148,9 +214,20 @@ def push(ctx, title, create):
         if not create:
             raise Exception("page %s does not exist in project %s"%(title, str(ctx.obj['project'])))
 
+    uploads = []
 
+    if upload_attachments:
+        #[{'path': '/absolute/path/to/file'}, {'path': BytesIO(b'I am content of file 2')}]
+        for fn in glob.glob("attachments/*"):
+            print("found file to attach:", fn)
+            uploads.append({
+                    'path': fn,
+                    'filename': os.path.basename(fn),
+                    'description': '',
+                    'content_type': 'image/png',
+                })
 
-    page = redmine.wiki_page.update(title, text=text, project_id=ctx.obj['project'].id)
+    page = redmine.wiki_page.update(title, text=text, project_id=ctx.obj['project'].id, uploads=uploads)
     print("succesfully updated!")
 
 
