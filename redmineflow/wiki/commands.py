@@ -147,9 +147,9 @@ def pull(ctx, title, local_name, include_attachments):
 
 
 @wiki.command()
-@click.option("--title")
-@click.option("--create/--no-create", default=False)
-@click.option("--upload-attachments", is_flag=True, default=False)
+@click.option("--title", help="page title, unless found in redmine-wiki.yaml")
+@click.option("--create/--no-create", default=False, help="what to do if the page does not exist")
+@click.option("--upload-attachments", is_flag=True, default=False, help="upload all files in \"./attachments/\" as attachments")
 @click.pass_context
 def push(ctx, title, create, upload_attachments):
     redmine = ctx.obj['redmine']
