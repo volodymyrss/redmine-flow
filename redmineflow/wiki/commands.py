@@ -1,11 +1,12 @@
 import redminelib
 import click
-import ruamel.yaml as yaml
+import yaml
 import os
 import re
 import glob
 import subprocess
 
+import redmineflow.redmine as remine_flow_core
 
 class repoconf:
     @staticmethod
@@ -20,7 +21,7 @@ class repoconf:
 
     @staticmethod
     def write(rc):
-        open("redmine-wiki.yaml", "w").write(yaml.dump(rc))
+        open("redmine-wiki.yaml", "w").write(yaml.dump(rc, sort_keys=True, indent=4))
 
     @staticmethod
     def update(rc):
@@ -115,7 +116,7 @@ def pull(ctx, title, local_name, include_attachments):
 
     rc = repoconf.read()
     if title is None:
-        if  'title' not in rc:
+        if 'title' not in rc:
             print("no title in command line or repo config")
             return
         else:
@@ -139,6 +140,8 @@ def pull(ctx, title, local_name, include_attachments):
 
     repoconf.update(dict(
         project_id = ctx.obj['project'].id,
+        project_name = ctx.obj['project'].name,
+        url = f"{remine_flow_core.redmine_url}/projects/{ctx.obj['project'].name}/wiki/{title.replace(' ', '_')}",
         title = title,
         local_name=local_name,
         upstream_type = 'redmine_wiki',

@@ -2,6 +2,8 @@ import redminelib
 import keyring
 import os
 
+redmine_url = 'https://redmine.isdc.unige.ch/'
+
 def connect():
     for n, m in [
                     ('environ', lambda:(
@@ -24,7 +26,7 @@ def connect():
 
     print("got credentials for", username)
 
-    redmine = redminelib.Redmine('https://redmine.isdc.unige.ch/', 
+    redmine = redminelib.Redmine(redmine_url, 
                        username=username, 
                        password=password)
     return redmine
